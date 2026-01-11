@@ -1,0 +1,983 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ECV@CVPR 2026 | 9th Workshop on Efficient Deep Learning for CV</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23668ecb%22/><text y=%2250%22 x=%2250%22 dy=%22.35em%22 text-anchor=%22middle%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 font-size=%2240%22>ECV</text></svg>">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --primary-color: #668ecb; /* Sky Blue */
+            --dark-bg: #111;
+            --light-bg: #f8f9fa;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: #333;
+            padding-top: 70px; /* Offset for fixed navbar */
+        }
+
+        /* Smooth Scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-weight: 700;
+            color: #000;
+        }
+        .nav-link {
+            font-weight: 500;
+            color: #555;
+            margin-left: 10px;
+        }
+        .nav-link.active, .nav-link:hover {
+            color: var(--primary-color);
+        }
+
+        /* Hero Header */
+        header.hero {
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1517077304055-6e89abbf09b0?q=80&w=2069&auto=format&fit=crop');
+            background-size: cover;
+            background-position: center;
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+        .hero h1 { font-weight: 800; font-size: 3rem; margin-bottom: 20px; }
+        .hero h2 { font-weight: 300; font-size: 1.5rem; opacity: 0.9; }
+
+        /* Sections */
+        section {
+            padding: 80px 0;
+            border-bottom: 1px solid #eee; /* Visual separator for chapters */
+        }
+        .bg-light-alt {
+            background-color: #f9f9f9;
+        }
+        .section-title {
+            text-align: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 50px;
+            position: relative;
+            padding-top: 20px; /* Extra space for anchor jump */
+        }
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 60px;
+            height: 3px;
+            background: var(--primary-color);
+            margin: 15px auto 0;
+        }
+
+        /* Lists */
+        .topic-list li { margin-bottom: 8px; }
+
+        /* Impact List Styling */
+        .impact-list ul {
+            margin-top: 10px;
+            margin-bottom: 20px;
+        }
+        .impact-list > li {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+        .impact-list li strong {
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        /* Cards (Speakers/Organizers) */
+        .person-card {
+            border: none;
+            background: #fff;
+            transition: transform 0.3s;
+            height: 100%;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .person-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .person-img {
+            width: 75%;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            background-color: #ddd;
+            display: block;
+            margin: 1.5rem auto 0;
+            border-radius: 8px;
+        }
+        .person-card .card-body {
+            text-align: center;
+        }
+        .card-body h5 { font-weight: 700; margin-bottom: 5px; }
+        .card-body .org { color: #666; font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; display: block; }
+        .card-body p { font-size: 0.85rem; color: #555; }
+
+        /* Schedule Table */
+        .table-dark th {
+            color: #000;
+        }
+        .table-schedule td { vertical-align: middle; }
+
+        /* Offset for anchor links so header doesn't cover title */
+        section[id] {
+            scroll-margin-top: 60px;
+        }
+
+        .past-workshop-img {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+        }
+        .text-primary {
+            color: var(--primary-color) !important;
+        }
+        #topics .card h4 {
+            font-size: 1.1rem;
+        }
+        .btn-primary {
+            background-color: var(--primary-color) !important;
+            border-color: var(--primary-color) !important;
+        }
+        .border-primary {
+            border-color: var(--primary-color) !important;
+        }
+        .bg-primary {
+            background-color: var(--primary-color) !important;
+        }
+        .impact-section-img {
+            width: 60%;
+            height: 60%; /* 强制高度填满父容器 */
+            object-fit: cover; /* 裁剪图片以适应比例，不留白 */
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .impact-list li strong {
+            color: var(--primary-color);
+            cursor: pointer;
+            font-weight: 700;
+            display: block; /* 让点击区域更好点 */
+            margin-bottom: 0.2rem;
+        }
+
+        .impact-list li strong:hover {
+            color: #4a7abf; /* hover 变深色一点 */
+            text-decoration: underline;
+        }
+
+        .impact-list ul {
+            list-style-type: disc;
+            padding-left: 20px;
+            color: #555;
+            font-size: 0.95rem;
+        }
+
+        .table-schedule thead th {
+            background-color: var(--primary-color); /* 使用主题蓝作为背景 */
+            color: #fff; /* 白色文字 */
+            border-bottom: none;
+        }
+        .table-schedule td { vertical-align: middle; }
+
+        section[id] { scroll-margin-top: 60px; }
+        .past-workshop-img { height: 200px; object-fit: cover; width: 100%; }
+        .text-primary { color: var(--primary-color) !important; }
+        .btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; }
+    </style>
+</head>
+<body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100">
+
+<nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand" href="#">ECV @ CVPR 2026</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+<!--                <li class="nav-item"><a class="nav-link" href="#topics">Topics</a></li>-->
+                <li class="nav-item"><a class="nav-link" href="#speakers">Speakers</a></li>
+                <li class="nav-item"><a class="nav-link" href="#schedule">Schedule</a></li>
+                <li class="nav-item"><a class="nav-link" href="#competition">Competition</a></li>
+                <li class="nav-item"><a class="nav-link" href="#papers">Call For Papers</a></li>
+                <li class="nav-item"><a class="nav-link" href="#organizers">Organizers</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<header id="home" class="hero">
+    <div class="container">
+        <h1>9th Workshop on Efficient Deep Learning for Computer Vision</h1>
+        <h2>ECV at CVPR 2026</h2>
+        <p class="mt-3 lead">Full Day Workshop | In-Person | Location TBD</p>
+        <div class="mt-4">
+            <a href="#papers" class="btn btn-primary btn-lg me-2">Call For Papers</a>
+            <a href="#competition" class="btn btn-outline-light btn-lg">Join Competition</a>
+        </div>
+    </div>
+</header>
+
+<section id="topics">
+    <div class="container">
+        <h2 class="section-title">Overview & Topics</h2>
+        <p class="lead text-center mb-5">
+            Mainstream computer vision research frequently overlooks factors like on-device latency, resource use, and power consumption.
+            This year's ECV workshop addresses true efficiency in the era of Foundation Models and Embodied AI.
+        </p>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                    <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-1" style="cursor: pointer;">
+                        <i class="fas fa-microchip me-2"></i>Efficient and Scalable Perception Systems
+                    </h4>
+                    <div id="topic-1" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>Foundation model efficiency, latency-aware training, and tunable accuracy-efficiency tradeoffs</li>
+                            <li>Scalable architectures (e.g., mixture-of-experts, vision transformers)</li>
+                            <li>Efficient representation learning for images, multimodal, 3D, and 4D data</li>
+                            <li>Optimization for edge deployment and low-power hardware</li>
+                            <li>Annotation-efficient pipelines (simulation, augmentation, active selection)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                     <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-2" style="cursor: pointer;">
+                        <i class="fas fa-brain me-2"></i>Generative and Foundation Models on Edge Devices
+                    </h4>
+                    <div id="topic-2" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>Generative AI for language models, parallel decoding, long-context and KV-cache management</li>
+                            <li>Multimodal generative models, VQA and fusion for text, vision, audio, and sensor data</li>
+                            <li>Diffusion models, step, adversarial, knowledge distillation, consistency models</li>
+                            <li>Vision-Language-Action models and interactive environments</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                    <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-3" style="cursor: pointer;">
+                        <i class="fas fa-cube me-2"></i>3D Scene Understanding and Reconstruction in AR/VR
+                    </h4>
+                    <div id="topic-3" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>3D from multi-view, sensors, or single images</li>
+                            <li>Real-time 3D perception, mapping, reconstruction, and rendering</li>
+                            <li>Compositional and open-vocabulary 3D scene understanding</li>
+                            <li>Robust segmentation and affordance prediction in complex scenes</li>
+                            <li>Efficient 3D/4D representation learning and compression (point cloud, 6DoF)</li>
+                            <li>Multi-view and multi-temporal consistency in 3D/4D generation</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                    <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-4" style="cursor: pointer;">
+                        <i class="fas fa-robot me-2"></i>Embodied AI and Interactive Agents
+                    </h4>
+                    <div id="topic-4" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>Robotics and embodied vision: active agents, simulation, causal/object-centric representations</li>
+                            <li>Dynamic modeling of environments and objects for manipulation and navigation (VLA)</li>
+                            <li>Few-shot and adaptive learning for Vision-Language Agents (VLA) in open environments</li>
+                            <li>Closed-loop policy learning for task completion in cluttered environments</li>
+                            <li>Integration of human cues (gaze, pose) into perception and decision-making</li>
+                            <li>Continual learning, adaptive memory, and long-horizon reasoning</li>
+                            <li>Evaluation frameworks for perception, action, and memory in embodied systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                    <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-5" style="cursor: pointer;">
+                        <i class="fas fa-user-astronaut me-2"></i>Avatars, Neural Rendering, and Personalization
+                    </h4>
+                    <div id="topic-5" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>Expressive avatar synthesis and display for HRI (human-robot interaction)</li>
+                            <li>Neural rendering for dynamic humans and avatars</li>
+                            <li>Personalization from limited data (few snapshots, generalizable enrollment)</li>
+                            <li>Relighting, appearance adaptation, and editing under varied conditions</li>
+                            <li>Consistency and realism across environments and devices</li>
+                            <li>Efficient streaming and transmission of animated avatars</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm p-3">
+                    <h4 class="text-primary" data-bs-toggle="collapse" data-bs-target="#topic-6" style="cursor: pointer;">
+                        <i class="fas fa-eye me-2"></i>Egocentric and Social Perception
+                    </h4>
+                    <div id="topic-6" class="collapse">
+                        <ul class="topic-list pt-2">
+                            <li>Egocentric hand/body tracking and human-object interaction</li>
+                            <li>Emotion-aware communication and feedback in interactive systems</li>
+                            <li>Strategies for social presence and trust in companion robots</li>
+                            <li>Methods for continual adaptation and personalization in interactive systems</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="row align-items-center g-5"> <div class="col-lg-6">
+            <h3 class="mb-4" style="font-weight: 700;">Potential Impacts</h3>
+            <p class="text-muted mb-4">
+                Efficient computer vision on mobile, wearable, and robotics devices unlocks transformative possibilities across industries.
+            </p>
+
+            <ul class="list-unstyled impact-list">
+                <li>
+                    <strong data-bs-toggle="collapse" data-bs-target="#impact-1">
+                        <i class="fas fa-heartbeat me-2"></i>Healthcare & Fitness <i class="fas fa-chevron-down ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>
+                    </strong>
+                    <div id="impact-1" class="collapse show"> <ul>
+                        <li>Remote Monitoring: Wearable devices monitoring vital signs and physical activities.</li>
+                        <li>Early Diagnosis: Enhanced image processing for detection of skin conditions, eye health, etc.</li>
+                    </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong data-bs-toggle="collapse" data-bs-target="#impact-2">
+                        <i class="fas fa-industry me-2"></i>Industrial Applications <i class="fas fa-chevron-down ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>
+                    </strong>
+                    <div id="impact-2" class="collapse">
+                        <ul>
+                            <li>Quality Control: Automated product inspection for manufacturing.</li>
+                            <li>Maintenance and Repair: Wearable devices guiding technicians through complex repairs.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong data-bs-toggle="collapse" data-bs-target="#impact-3">
+                        <i class="fas fa-universal-access me-2"></i>Accessibility <i class="fas fa-chevron-down ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>
+                    </strong>
+                    <div id="impact-3" class="collapse">
+                        <ul>
+                            <li>Assistance for the Visually Impaired: Identifying objects and reading text aloud.</li>
+                            <li>Gesture Recognition: Enabling touchless interaction for users with physical disabilities.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong data-bs-toggle="collapse" data-bs-target="#impact-4">
+                        <i class="fas fa-leaf me-2"></i>Environmental Monitoring <i class="fas fa-chevron-down ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>
+                    </strong>
+                    <div id="impact-4" class="collapse">
+                        <ul>
+                            <li>Wildlife Tracking: Monitoring animal movements and detecting activities via edge devices.</li>
+                        </ul>
+                    </div>
+                </li>
+                <li>
+                    <strong data-bs-toggle="collapse" data-bs-target="#impact-5">
+                        <i class="fas fa-robot me-2"></i>Robotics <i class="fas fa-chevron-down ms-1" style="font-size: 0.8em; opacity: 0.5;"></i>
+                    </strong>
+                    <div id="impact-5" class="collapse">
+                        <ul>
+                            <li>Extended Operational Time: Reduced energy consumption enabling longer battery life.</li>
+                            <li>Real-Time Processing: Faster visual processing for responsive actions.</li>
+                            <li>Increased Mobility: Compact processing units allow for smaller robots.</li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+        </div>
+
+            <div class="col-lg-6">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1965&auto=format&fit=crop"
+                     alt="AI Vision Technology"
+                     class="impact-section-img">
+            </div>
+        </div>
+
+        <hr class="my-5">
+
+        <div class="text-center">
+            <h3 class="text-center mb-4">Highlights from the 8th ECV Workshop (CVPR 2025)</h3>
+            <div class="row mt-3">
+                <div class="col-4"><img src="images/previous_ecv1.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
+                <div class="col-4"><img src="images/previous_ecv2.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
+                <div class="col-4"><img src="images/previous_ecv3.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="speakers" class="bg-light-alt">
+    <div class="container">
+        <h2 class="section-title">Invited Speakers</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Hai.png" class="person-img" alt="Hai Li">
+                    <div class="card-body">
+                        <h5><a href="https://ece.duke.edu/people/hai-helen-li/" class="text-primary" target="_blank">Hai Li</a></h5>
+                        <span class="org">Duke University</span>
+                        <p class="small">Topic: Intelligent Edge Computing</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Forrest.png" class="person-img" alt="Forrest Iandola">
+                    <div class="card-body">
+                        <h5><a href="https://forrestiandola.com/" class="text-primary" target="_blank">Forrest Iandola</a></h5>
+                        <span class="org">Meta</span>
+                        <p class="small">Topic: On Device Augmented Reality</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Joseph.png" class="person-img" alt="Joseph Spisak">
+                    <div class="card-body">
+                        <h5><a href="https://www.linkedin.com/in/jspisak/" class="text-primary" target="_blank">Joseph Spisak</a></h5>
+                        <span class="org">Meta</span>
+                        <p class="small">Topic: Efficient Generative AI</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Dashan.png" class="person-img" alt="Dashan Gao">
+                    <div class="card-body">
+                        <h5><a href="https://scholar.google.com/citations?user=U11LlOsAAAAJ&hl=en" class="text-primary" target="_blank">Dashan Gao</a></h5>
+                        <span class="org">Qualcomm</span>
+                        <p class="small">Topic: Agentic AI on devices</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Song.png" class="person-img" alt="Song Han">
+                    <div class="card-body">
+                        <h5><a href="https://hanlab.mit.edu/songhan" class="text-primary" target="_blank">Song Han</a></h5>
+                        <span class="org">MIT</span>
+                        <p class="small">Topic: Efficient Visual Generation on the Edge</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Xiaolong.png" class="person-img" alt="Xiaolong Wang">
+                    <div class="card-body">
+                        <h5><a href="https://xiaolonw.github.io/" class="text-primary" target="_blank">Xiaolong Wang</a></h5>
+                        <span class="org">UCSD</span>
+                        <p class="small">Topic: Efficient Robot Learning from Human Videos</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Oncel.png" class="person-img" alt="Oncel Tuzel">
+                    <div class="card-body">
+                        <h5><a href="https://www.onceltuzel.net/" class="text-primary" target="_blank">Oncel Tuzel</a></h5>
+                        <span class="org">Apple</span>
+                        <p class="small">Topic: Advancing the Frontiers of Edge AI</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="person-card">
+                    <img src="images/Stella.png" class="person-img" alt="Stella Yu">
+                    <div class="card-body">
+                        <h5><a href="https://web.eecs.umich.edu/~stellayu/" class="text-primary" target="_blank">Stella Yu</a></h5>
+                        <span class="org">University of Michigan</span>
+                        <p class="small">Topic: Context as Efficiency in Embodied AI</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="schedule">
+    <div class="container">
+        <h2 class="section-title">Schedule</h2>
+        <div class="table-responsive">
+            <table class="table table-hover table-schedule">
+                <thead class="table-dark">
+                <tr>
+                    <th scope="col" style="width: 15%">Time</th>
+                    <th scope="col">Topic</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr><th>09:00 AM</th><td>Welcome by Organizers</td></tr>
+                <tr><th>09:10 AM</th><td>Invited Talk</td></tr>
+                <tr><th>09:40 AM</th><td>Invited Talk</td></tr>
+                <tr><th>10:10 AM</th><td>Invited Talk</td></tr>
+                <tr class="table-warning"><th>10:40 AM</th><td>Break and Onsite Demos</td></tr>
+                <tr><th>11:00 AM</th><td>Invited Talk</td></tr>
+                <tr><th>11:30 AM</th><td>Invited Talk</td></tr>
+                <tr class="table-info"><th>12:00 PM</th><td>Lunch</td></tr>
+                <tr><th>01:00 PM</th><td>Invited Talk</td></tr>
+                <tr><th>01:30 PM</th><td>Invited Talk</td></tr>
+                <tr><th>02:00 PM</th><td>Invited Talk</td></tr>
+                <tr class="table-warning"><th>02:30 PM</th><td>Break and Onsite Demos</td></tr>
+                <tr><th>03:00 PM</th><td><strong>Competition:</strong> 2026 Low-Power Computer Vision Challenge</td></tr>
+                <tr><th>03:30 PM</th><td>Workshop Paper Presentations and Poster Session</td></tr>
+                <tr><th>05:30 PM</th><td>Conclusion by Organizers</td></tr>
+                <tr><th>05:40 PM</th><td>Adjourn</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="competition" class="bg-light-alt">
+    <div class="container">
+        <h2 class="section-title">2026 Low-Power CV Challenge</h2>
+
+        <div class="text-center mb-5">
+            <a href="https://lpcv.ai/" target="_blank" class="btn btn-primary btn-lg px-5 py-3 rounded-pill shadow">
+                <i class="fas fa-external-link-alt me-2"></i>Register & Submit at LPCV.AI
+            </a>
+            <p class="text-muted mt-3 small">
+                Sponsored by <strong>Qualcomm</strong> and the <strong>IEEE Computer Society</strong>.
+            </p>
+        </div>
+
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10 text-center">
+                <p>
+                    Since 2015, the <strong>Low Power Computer Vision Challenge (LPCVC)</strong> has been the premier venue for optimizing computer vision not just for accuracy, but for execution time, energy consumption, and memory efficiency.
+                    Unlike cloud-based competitions, LPCVC 2026 focuses on practical, real-world applications running on <strong>edge devices</strong> (mobile phones and AI PCs).
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="mb-3 text-primary">
+                        <i class="fas fa-image fa-3x"></i>
+                    </div>
+                    <h4>Track 1</h4>
+                    <h5 class="fw-bold mb-3">Image-to-Text Retrieval</h5>
+                    <p class="text-muted small">
+                        Submit a vision-language model (e.g., CLIP-like) to generate image/text embeddings.
+                        Evaluated on <strong>Recall@10</strong> and <strong>Inference Latency</strong>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="mb-3 text-primary">
+                        <i class="fas fa-video fa-3x"></i>
+                    </div>
+                    <h4>Track 2</h4>
+                    <h5 class="fw-bold mb-3">Video Action Recognition</h5>
+                    <p class="text-muted small">
+                        Process short video clips (5-10s) to classify workout actions using the Qualcomm Exercise Video Dataset.
+                        Evaluated on <strong>Top-k Accuracy</strong> and <strong>Latency</strong>.
+                    </p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card h-100 border-0 shadow-sm text-center p-4">
+                    <div class="mb-3 text-primary">
+                        <i class="fas fa-user-secret fa-3x"></i>
+                    </div>
+                    <h4>Track 3</h4>
+                    <h5 class="fw-bold mb-3">Explainable Forgery Detection</h5>
+                    <p class="text-muted small">
+                        Use VLMs to detect AI-generated images (Stable Diffusion, DALLE-3, etc.) and provide text explanations.
+                        Evaluated on <strong>Detection Score</strong> and <strong>Explanation Quality</strong>.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card border-primary mb-4">
+            <div class="card-body text-center py-5">
+                <h3 class="mb-4"><i class="fas fa-trophy text-primary me-2"></i>Prizes (Per Track)</h3>
+                <div class="row justify-content-center">
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <h4 class="fw-bold text-success">$6,000</h4>
+                            <span>Champion</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <h4 class="fw-bold text-primary">$3,000</h4>
+                            <span>Runner-up</span>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="p-3 bg-light rounded">
+                            <h4 class="fw-bold text-info">$1,000</h4>
+                            <span>Third Place</span>
+                        </div>
+                    </div>
+                </div>
+                <p class="mt-3 text-muted mb-0">
+                    <i class="fas fa-bolt text-warning"></i> <strong>Early Bird:</strong> First 5 valid submissions in each track receive <strong>$200</strong>.
+                </p>
+            </div>
+        </div>
+
+        <h4 class="text-center mb-4"><i class="far fa-calendar-alt me-2 text-primary"></i> Important Dates</h4>
+
+        <div class="row text-center justify-content-center mb-5">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Dataset Release</small>
+                    <h5 class="text-primary mt-2 mb-0">Mar 1, 2026</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Submission Open</small>
+                    <h5 class="text-primary mt-2 mb-0">Apr 1 - 30, 2026</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Winners Announced</small>
+                    <h5 class="text-primary mt-2 mb-0">May 15, 2026</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Presentations</small>
+                    <h5 class="text-primary mt-2 mb-0">June 2026 (at ECV Workshop)</h5>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section id="papers" class="bg-light-alt">
+    <div class="container">
+        <h2 class="section-title">Call For Papers</h2>
+
+        <div class="row justify-content-center mb-5">
+            <div class="col-lg-10 text-center">
+                <p>
+                    We invite researchers, practitioners, and industry experts to submit original contributions. Join us to foster discussion and innovation around scalable, resource-conscious solutions that enable cutting-edge performance while reducing computational cost.
+                    This year’s ECV workshop addresses a range of topics including Efficient Perception, Generative AI on Edge, Embodied AI, and more.
+                </p>
+                <a href="#topics" class="btn btn-outline-primary rounded-pill px-4">
+                    <i class="fas fa-arrow-up me-2"></i>View Detailed Topics
+                </a>
+            </div>
+        </div>
+
+        <h4 class="text-center mb-4 fw-bold">Submission Guidelines</h4>
+
+        <div class="row g-4 mb-5">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-primary text-white text-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-paper-plane me-2"></i>Short Paper</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <strong>Length:</strong> Max 4 pages (excluding refs).
+                            </li>
+                            <li class="mb-3">
+                                <strong>Purpose:</strong> Share exciting and novel early-stage ideas.
+                            </li>
+                            <li class="mb-3">
+                                <strong>Content:</strong> Describe ideas with preliminary experiments. Extensive comparisons are not required.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-header bg-dark text-white text-center py-3">
+                        <h5 class="mb-0"><i class="fas fa-file-alt me-2"></i>Long Paper</h5>
+                    </div>
+                    <div class="card-body p-4">
+                        <ul class="list-unstyled">
+                            <li class="mb-3">
+                                <strong>Length:</strong> Max 8 pages (excluding refs).
+                            </li>
+                            <li class="mb-3">
+                                <strong>Purpose:</strong> Present mature works.
+                            </li>
+                            <li class="mb-3">
+                                <strong>Content:</strong> Novel ideas with sufficient experiments, analyses, and comparisons.
+                            </li>
+                            <li class="mt-4 pt-3 border-top text-success">
+                                <i class="fas fa-check-circle me-1"></i> <strong>Published in CVPR Workshop Proceedings</strong>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="bg-white p-4 rounded shadow-sm border">
+                    <h5 class="fw-bold mb-3">Formatting & Review</h5>
+                    <ul class="mb-0">
+                        <li class="mb-2"><strong>Template:</strong> Must follow <a href="https://github.com/cvpr-org/author-kit/releases" target="_blank" class="text-decoration-none">CVPR 2026 Author Guidelines</a>.</li>
+                        <li class="mb-2"><strong>Anonymity:</strong> Double-blind peer review. No author names or affiliations in the manuscript.</li>
+                        <li class="mb-2"><strong>Rejection:</strong> Papers beyond 8 pages (excluding refs) will be desk rejected.</li>
+                        <li class="mb-2"><strong>Presentation:</strong> Oral talks or posters. Demo videos/code highly encouraged.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="text-center mb-4"><i class="far fa-calendar-alt me-2 text-primary"></i> Important Dates</h4>
+
+        <div class="row text-center justify-content-center mb-5">
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Submission Deadline</small>
+                    <h5 class="text-primary mt-2 mb-0">[Insert Date]</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Notification</small>
+                    <h5 class="text-primary mt-2 mb-0">[Insert Date]</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Camera Ready</small>
+                    <h5 class="text-primary mt-2 mb-0">April 11, 2026</h5>
+                </div>
+            </div>
+            <div class="col-6 col-md-3 mb-3">
+                <div class="p-3 bg-white border rounded h-100">
+                    <small class="text-uppercase text-muted fw-bold">Workshop Date</small>
+                    <h5 class="text-primary mt-2 mb-0">[Insert Date]</h5>
+                </div>
+            </div>
+        </div>
+
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h5 class="fw-bold mb-3">Tips for a Strong Submission</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Clearly demonstrate efficiency gains (FLOPs, speedup, memory).</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Compare against state-of-the-art baselines.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Include real-world deployment scenarios if possible.</li>
+                    <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Share open-source code for reproducibility.</li>
+                </ul>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="card bg-light border-0 p-4">
+                    <h5 class="mb-3">Ready to submit?</h5>
+                    <a href="#" class="btn btn-primary btn-lg shadow rounded-pill">
+                        Submit via CMT / OpenReview
+                    </a>
+                    <small class="text-muted d-block mt-2">Link coming soon</small>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+<section id="organizers" class="bg-light-alt">
+    <div class="container">
+        <h2 class="section-title">Organizing Committee</h2>
+
+        <div class="row g-4 justify-content-center mb-5">
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Shuai Zhang</h5>
+                    <p class="text-primary small fw-bold mb-2">Qualcomm</p>
+                    <a href="mailto:shuazhan@qti.qualcomm.com" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> shuazhan@qti...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Yung-Hsiang Lu</h5>
+                    <p class="text-primary small fw-bold mb-2">Purdue University</p>
+                    <a href="mailto:yunglu@purdue.edu" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> yunglu@purdue...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Chen Chen</h5>
+                    <p class="text-primary small fw-bold mb-2">UCF</p>
+                    <a href="mailto:chen.chen@crcv.ucf.edu" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> chen.chen@crcv...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Xiao Hu</h5>
+                    <p class="text-primary small fw-bold mb-2">Qualcomm</p>
+                    <a href="mailto:hux@qti.qualcomm.com" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> hux@qti...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Ning Bi</h5>
+                    <p class="text-primary small fw-bold mb-2">Qualcomm</p>
+                    <a href="mailto:nbi@qti.qualcomm.com" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> nbi@qti...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">Pavlo Molchanov</h5>
+                    <p class="text-primary small fw-bold mb-2">NVIDIA</p>
+                    <a href="mailto:pmolchanov@nvidia.com" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> pmolchanov@nvidia...
+                    </a>
+                </div>
+            </div>
+
+            <div class="col-lg-3 col-md-4 col-sm-6">
+                <div class="card h-100 border-0 shadow-sm text-center py-4 person-card-minimal">
+                    <h5 class="mb-1 fw-bold">R. Krishnamoorthi</h5>
+                    <p class="text-primary small fw-bold mb-2">Meta</p>
+                    <a href="mailto:raghuraman@meta.com" class="text-muted hover-primary">
+                        <i class="fas fa-envelope"></i> raghuraman@meta...
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <h4 class="text-center mb-4 mt-5">Technical Program Committee</h4>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="bg-white rounded shadow-sm p-4">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Joe Spisak</strong> <small class="text-muted ms-1">Meta</small></span>
+                                    <a href="mailto:jspisak@meta.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Rameswar Panda</strong> <small class="text-muted ms-1">IBM</small></span>
+                                    <a href="mailto:rpanda@ibm.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Weiwei Li</strong> <small class="text-muted ms-1">Xpeng</small></span>
+                                    <a href="mailto:weiweil@xiaopeng.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Taotao Jing</strong> <small class="text-muted ms-1">Qualcomm</small></span>
+                                    <a href="mailto:tjing@qti.qualcomm.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Yi Li</strong> <small class="text-muted ms-1">Qualcomm</small></span>
+                                    <a href="mailto:yli35@qti.qualcomm.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="col-md-6">
+                            <ul class="list-group list-group-flush">
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Mengran Gou</strong> <small class="text-muted ms-1">Qualcomm</small></span>
+                                    <a href="mailto:mgou@qti.qualcomm.com" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Soonhoi Ha</strong> <small class="text-muted ms-1">Seoul Nat. Univ</small></span>
+                                    <a href="mailto:sha@iris.snu.ac.kr" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Xiaoli Li</strong> <small class="text-muted ms-1">SUTD</small></span>
+                                    <a href="mailto:xiaoli_li@sutd.edu.sg" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Zihao Ye (Student)</strong> <small class="text-muted ms-1">Purdue</small></span>
+                                    <a href="mailto:ye277@purdue.edu" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                                    <span><strong>Yuanhao Zou (Student)</strong> <small class="text-muted ms-1">UCF</small></span>
+                                    <a href="mailto:yuanhaoz@ucf.edu" class="text-secondary"><i class="fas fa-envelope"></i></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<style>
+    /* Card Hover Effect */
+    .person-card-minimal {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .person-card-minimal:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+    }
+    /* Link Hover Styling */
+    .hover-primary {
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+    .hover-primary:hover {
+        color: var(--primary-color) !important;
+        text-decoration: underline;
+    }
+</style>
+
+<footer class="py-5 bg-dark text-white">
+    <div class="container text-center">
+        <p class="mb-0">&copy; 2026 ECV Workshop | In conjunction with CVPR 2026</p>
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
