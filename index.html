@@ -51,7 +51,7 @@
         header.hero {
             position: relative;
             color: white;
-            padding: 100px 0;
+            padding: 180px 0;
             text-align: center;
             overflow: hidden;
         }
@@ -240,7 +240,26 @@
         .text-primary { color: var(--primary-color) !important; }
         .btn-primary { background-color: var(--primary-color) !important; border-color: var(--primary-color) !important; }
 
-        
+        .rolling-carousel {
+            overflow: hidden;          /* hide images outside the container */
+            white-space: nowrap;       /* keep images in a single line */
+            width: 100%;               /* full width */
+        }
+
+        .rolling-track {
+            display: inline-flex;      /* keep images in a row */
+            animation: scroll-left 15s linear infinite; /* adjust duration for speed */
+        }
+
+        .rolling-track img {
+            height: 150px;             /* adjust as needed */
+            margin-right: 20px;        /* spacing between images */
+        }
+
+        @keyframes scroll-left {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); } /* scroll half the track (because we duplicated images) */
+        }
     </style>
 </head>
 <body data-bs-spy="scroll" data-bs-target="#mainNav" data-bs-offset="100">
@@ -478,10 +497,22 @@
 
         <div class="text-center">
             <h3 class="text-center mb-4">Highlights from the 8th ECV Workshop (CVPR 2025)</h3>
-            <div class="row mt-3">
-                <div class="col-4"><img src="images/previous_ecv1.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
-                <div class="col-4"><img src="images/previous_ecv2.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
-                <div class="col-4"><img src="images/previous_ecv3.png" class="img-fluid rounded past-workshop-img" alt="Past Workshop"></div>
+            <div class="rolling-carousel">
+                <div class="rolling-track">
+                    <img src="images/IMG_0247.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0248.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0293.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0309.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0320.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0341.png" class="past-workshop-img" alt="Past Workshop">
+                    <!-- duplicate images for seamless loop -->
+                    <img src="images/IMG_0247.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0248.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0293.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0309.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0320.png" class="past-workshop-img" alt="Past Workshop">
+                    <img src="images/IMG_0341.png" class="past-workshop-img" alt="Past Workshop">
+                </div>
             </div>
         </div>
     </div>
